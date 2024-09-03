@@ -137,12 +137,14 @@ class DataGenerator(IterableDataset):
         ### START CODE HERE ###
 
         # Step 1: Sample N (self.num_classes in our case) different characters folders 
-        
+
+        characters = random.sample(self.folders, self.num_classes)
         # Step 2: Sample and load K + 1 (self.self.num_samples_per_class in our case) images per character together with their labels preserving the order!
         # Use our get_images function defined above.
         # You should be able to complete this with only one call of get_images(...)!
         # Please closely check the input arguments of get_images to understand how it works.
-
+        
+        images_labels = get_images(characters, np.eye(self.num_classes), self.num_classes)
         # Step 3: Iterate over the sampled files and create the image and label batches
 
         # Make sure that we have a fixed order as pictured in the assignment writeup
