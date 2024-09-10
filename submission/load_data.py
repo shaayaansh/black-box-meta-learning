@@ -138,6 +138,8 @@ class DataGenerator(IterableDataset):
 
         # Step 1: Sample N (self.num_classes in our case) different characters folders 
 
+        print("SELF FOLDERS: ", self.folders)
+        print("SELF NUM_CLASSES: ", self.num_classes)
         characters = random.sample(self.folders, self.num_classes)
         # Step 2: Sample and load K + 1 (self.self.num_samples_per_class in our case) images per character together with their labels preserving the order!
         # Use our get_images function defined above.
