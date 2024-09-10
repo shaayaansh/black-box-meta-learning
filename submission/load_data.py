@@ -144,14 +144,24 @@ class DataGenerator(IterableDataset):
         # You should be able to complete this with only one call of get_images(...)!
         # Please closely check the input arguments of get_images to understand how it works.
         
-        images_labels = get_images(characters, np.eye(self.num_classes), self.num_classes)
+        labels_and_images = get_images(characters, np.eye(self.num_classes), self.num_classes)
         # Step 3: Iterate over the sampled files and create the image and label batches
 
+        image_batch = []
+        label_batch = []
+
+        for (label, image) in labels_and_images:
+            image_batch.append(self.image_file_to_array(image))
+            label_batch.append(label)
         # Make sure that we have a fixed order as pictured in the assignment writeup
         # Use our image_file_to_array function defined above.
         
         # Step 4: Shuffle the order of examples from the query set
-        
+        image_batch = random.Random(100).shuffle(image_batch)
+        label_batch = random.Random(100).shuffle(label_batch)      
+
+        print(len(image_batch))
+        print(len(label_batch))
 
         # Step 5: return tuple of image batch with shape [K+1, N, 784] and
         #         label batch with shape [K+1, N, N]
