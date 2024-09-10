@@ -83,6 +83,8 @@ class DataGenerator(IterableDataset):
         self.image_caching = cache
         self.stored_images = {}
 
+        print(len(self.metatrain_character_folders))
+        print(self.metatrain_character_folders[:5])
         if batch_type == "train":
             self.folders = self.metatrain_character_folders
         elif batch_type == "val":
