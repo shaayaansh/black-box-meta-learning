@@ -71,8 +71,8 @@ class DataGenerator(IterableDataset):
             if os.path.isdir(os.path.join(data_folder, family, character))
         ]
 
-        print(character_folders)
-        
+        print("character_folders length : ", len(character_folders))
+
         random.seed(1)
         random.shuffle(character_folders)
         num_val = 100
