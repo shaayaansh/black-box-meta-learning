@@ -157,7 +157,7 @@ class DataGenerator(IterableDataset):
         label_batch = []
 
         for (label, image) in labels_and_images:
-            image_batch.append(self.image_file_to_array(image))
+            image_batch.append(self.image_file_to_array(image, self.dim_input))
             label_batch.append(label)
         # Make sure that we have a fixed order as pictured in the assignment writeup
         # Use our image_file_to_array function defined above.
