@@ -168,11 +168,14 @@ class DataGenerator(IterableDataset):
         print(len(label_batch))
         print(len(image_batch[0]))
 
-        image_batch = random.Random(100).shuffle(image_batch)
-        label_batch = random.Random(100).shuffle(label_batch)      
+        indices = list(range(len(image_batch)))
+        random.shuffle(indices)
 
-        print(len(image_batch))
-        print(len(label_batch))
+        shuffled_image_batch = [image_batch[i] for i in indices]
+        shuffled_label_batch = [label_batch[i] for i in indices]
+
+        print(len(shuffled_image_batch))
+        print(len(shuffled_label_batch))
 
         # Step 5: return tuple of image batch with shape [K+1, N, 784] and
         #         label batch with shape [K+1, N, N]
