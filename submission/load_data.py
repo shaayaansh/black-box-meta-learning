@@ -76,7 +76,7 @@ class DataGenerator(IterableDataset):
         random.seed(1)
         random.shuffle(character_folders)
         num_val = 100
-        num_train = 1100
+        num_train = 800
         self.metatrain_character_folders = character_folders[:num_train]
         self.metaval_character_folders = character_folders[num_train : num_train + num_val]
         self.metatest_character_folders = character_folders[num_train + num_val :]
