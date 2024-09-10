@@ -164,9 +164,9 @@ class DataGenerator(IterableDataset):
         
         # Step 4: Shuffle the order of examples from the query set
 
-        print(len(image_batch))
-        print(len(label_batch))
-        
+        print(image_batch.shape)
+        print(label_batch.shape)
+
         image_batch = random.Random(100).shuffle(image_batch)
         label_batch = random.Random(100).shuffle(label_batch)      
 
