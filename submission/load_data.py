@@ -71,7 +71,6 @@ class DataGenerator(IterableDataset):
             if os.path.isdir(os.path.join(data_folder, family, character))
         ]
 
-        print("character_folders length : ", len(character_folders))
 
         random.seed(1)
         random.shuffle(character_folders)
@@ -83,8 +82,6 @@ class DataGenerator(IterableDataset):
         self.image_caching = cache
         self.stored_images = {}
 
-        print(len(self.metatrain_character_folders))
-        print(self.metatrain_character_folders[:5])
         if batch_type == "train":
             self.folders = self.metatrain_character_folders
         elif batch_type == "val":
@@ -142,15 +139,15 @@ class DataGenerator(IterableDataset):
 
         # Step 1: Sample N (self.num_classes in our case) different characters folders 
 
-        print("SELF FOLDERS: ", self.folders)
         print("SELF NUM_CLASSES: ", self.num_classes)
+        print("NUM SAMPLES PER CLASS: ", self.num_samples_per_class)
         characters = random.sample(self.folders, self.num_classes)
         # Step 2: Sample and load K + 1 (self.self.num_samples_per_class in our case) images per character together with their labels preserving the order!
         # Use our get_images function defined above.
         # You should be able to complete this with only one call of get_images(...)!
         # Please closely check the input arguments of get_images to understand how it works.
         
-        labels_and_images = get_images(characters, np.eye(self.num_classes), self.num_classes)
+        labels_and_images = get_images(characters, np.eye(self.num_classes), self.num_samples_per_class)
         print(len(labels_and_images))
         # Step 3: Iterate over the sampled files and create the image and label batches
 
