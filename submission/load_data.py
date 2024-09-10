@@ -151,6 +151,7 @@ class DataGenerator(IterableDataset):
         # Please closely check the input arguments of get_images to understand how it works.
         
         labels_and_images = get_images(characters, np.eye(self.num_classes), self.num_classes)
+        print(len(labels_and_images))
         # Step 3: Iterate over the sampled files and create the image and label batches
 
         image_batch = []
@@ -164,18 +165,12 @@ class DataGenerator(IterableDataset):
         
         # Step 4: Shuffle the order of examples from the query set
 
-        print(len(image_batch))
-        print(len(label_batch))
-        print(len(image_batch[0]))
-
         indices = list(range(len(image_batch)))
         random.shuffle(indices)
 
         shuffled_image_batch = [image_batch[i] for i in indices]
         shuffled_label_batch = [label_batch[i] for i in indices]
 
-        print(len(shuffled_image_batch))
-        print(len(shuffled_label_batch))
 
         # Step 5: return tuple of image batch with shape [K+1, N, 784] and
         #         label batch with shape [K+1, N, N]
