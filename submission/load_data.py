@@ -163,6 +163,10 @@ class DataGenerator(IterableDataset):
         # Use our image_file_to_array function defined above.
         
         # Step 4: Shuffle the order of examples from the query set
+
+        print(len(image_batch))
+        print(len(label_batch))
+        
         image_batch = random.Random(100).shuffle(image_batch)
         label_batch = random.Random(100).shuffle(label_batch)      
 
