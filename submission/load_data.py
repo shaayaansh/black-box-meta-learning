@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import IterableDataset
 import time
 import imageio
+from collections import defaultdict
 
 
 def get_images(paths, labels, num_samples=None):
@@ -132,12 +133,11 @@ class DataGenerator(IterableDataset):
             4. PyTorch uses float32 as default for representing model parameters. 
             You would need to return numpy arrays with the same datatype
         """
-
+        
         #############################
         ### START CODE HERE ###
 
         # Step 1: Sample N (self.num_classes in our case) different characters folders 
-
         characters = random.sample(self.folders, self.num_classes)
         labels = np.eye(self.num_classes)
         # Step 2: Sample and load K + 1 (self.self.num_samples_per_class in our case) images per character together with their labels preserving the order!
@@ -145,36 +145,39 @@ class DataGenerator(IterableDataset):
         # You should be able to complete this with only one call of get_images(...)!
         # Please closely check the input arguments of get_images to understand how it works.
         
-        labels_and_images = get_images(characters, labels, self.num_samples_per_class)        
+        labels_and_images = get_images(characters, labels, 10) 
+
         # Step 3: Iterate over the sampled files and create the image and label batches
+
+        class_dict = defaultdict(list)
+        for item in labels_and_images:
+            label = tuple(item[0])
+            class_dict[label].append(item)
 
         image_batch = []
         label_batch = []
 
-        for label in labels:
-          img_batch = [self.image_file_to_array(img, self.dim_input) for (lbl, img) in labels_and_images if np.array_equal(lbl, label)]
-          lbl_batch = [lbl for (lbl, image) in labels_and_images if np.array_equal(lbl, label)]
-          image_batch.append(img_batch)
-          label_batch.append(lbl_batch)
-
+        for i in range(self.num_samples_per_class):
+          labels_batch = [class_dict[tuple(np.eye(self.num_classes)[c])][i][0] for c in range(self.num_classes)]
+          images_batch = [self.image_file_to_array(class_dict[tuple(np.eye(self.num_classes)[c])][i][1], self.dim_input) for c in range(self.num_classes)]
+          
+          image_batch.append(images_batch)
+          label_batch.append(labels_batch)
 
         # Make sure that we have a fixed order as pictured in the assignment writeup
         # Use our image_file_to_array function defined above.
         
         # Step 4: Shuffle the order of examples from the query set
 
-        indices = list(range(len(image_batch)))
-        random.shuffle(indices)
+        image_batch = np.array(image_batch)
+        label_batch = np.array(label_batch)
 
-        shuffled_image_batch = np.array([image_batch[i] for i in indices])
-        shuffled_label_batch = np.array([label_batch[i] for i in indices])
-        
         # Step 5: return tuple of image batch with shape [K+1, N, 784] and
         #         label batch with shape [K+1, N, N]
 
-        return (shuffled_image_batch, shuffled_label_batch)
+        return (image_batch, label_batch)
         ### END CODE HERE ###
-
+                
     def __iter__(self):
         while True:
             yield self._sample()
