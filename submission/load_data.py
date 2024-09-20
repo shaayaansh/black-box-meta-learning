@@ -71,7 +71,6 @@ class DataGenerator(IterableDataset):
             if os.path.isdir(os.path.join(data_folder, family, character))
         ]
 
-
         random.seed(1)
         random.shuffle(character_folders)
         num_val = 100
@@ -139,24 +138,26 @@ class DataGenerator(IterableDataset):
 
         # Step 1: Sample N (self.num_classes in our case) different characters folders 
 
-        print("SELF NUM_CLASSES: ", self.num_classes)
-        print("NUM SAMPLES PER CLASS: ", self.num_samples_per_class)
         characters = random.sample(self.folders, self.num_classes)
+        labels = np.eye(self.num_classes)
         # Step 2: Sample and load K + 1 (self.self.num_samples_per_class in our case) images per character together with their labels preserving the order!
         # Use our get_images function defined above.
         # You should be able to complete this with only one call of get_images(...)!
         # Please closely check the input arguments of get_images to understand how it works.
         
-        labels_and_images = get_images(characters, np.eye(self.num_classes), self.num_samples_per_class)
-        print(len(labels_and_images))
+        labels_and_images = get_images(characters, labels, self.num_samples_per_class)        
         # Step 3: Iterate over the sampled files and create the image and label batches
 
         image_batch = []
         label_batch = []
 
-        for (label, image) in labels_and_images:
-            image_batch.append(self.image_file_to_array(image, self.dim_input))
-            label_batch.append(label)
+        for label in labels:
+          img_batch = [self.image_file_to_array(img, self.dim_input) for (lbl, img) in labels_and_images if np.array_equal(lbl, label)]
+          lbl_batch = [lbl for (lbl, image) in labels_and_images if np.array_equal(lbl, label)]
+          image_batch.append(img_batch)
+          label_batch.append(lbl_batch)
+
+
         # Make sure that we have a fixed order as pictured in the assignment writeup
         # Use our image_file_to_array function defined above.
         
@@ -165,12 +166,13 @@ class DataGenerator(IterableDataset):
         indices = list(range(len(image_batch)))
         random.shuffle(indices)
 
-        shuffled_image_batch = [image_batch[i] for i in indices]
-        shuffled_label_batch = [label_batch[i] for i in indices]
-
-
+        shuffled_image_batch = np.array([image_batch[i] for i in indices])
+        shuffled_label_batch = np.array([label_batch[i] for i in indices])
+        
         # Step 5: return tuple of image batch with shape [K+1, N, 784] and
         #         label batch with shape [K+1, N, N]
+
+        return (shuffled_image_batch, shuffled_label_batch)
         ### END CODE HERE ###
 
     def __iter__(self):
