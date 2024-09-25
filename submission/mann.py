@@ -38,19 +38,18 @@ class MANN(nn.Module):
         ### START CODE HERE ###
 
         # Step 1: Concatenate the full (support & query) set of labels and images
-        input_images = input_images.to(torch.float32)
-        input_labels = input_labels.to(torch.float32)
+        labels_clone = input_labels.detach.clone()
 
-        concatenated_inputs = torch.cat((input_images, input_labels), dim=-1)      
+        concatenated_inputs = torch.cat((input_images, labels_clone), dim=-1)      
 
         # Step 2: Zero out the labels from the concatenated corresponding to the query set
         concatenated_inputs[:, -1,:, 784:] = 0
 
         # Step 3: Pass the concatenated set sequentially to the memory-augmented network
-        for item in concatenated_inputs[:, :-1,:,:]:
-            hidden = self.layer1(item)
+        concatenated_inputs = concatenated_inputs.view(concatenated_inputs.shape[0], -1, concatenated_inputs.shape[3])
 
-        output = self.layer2(hidden)
+        hidden, _ = self.layer1(concatenated_inputs.float())
+        output, _ = self.layer2(hidden)
         # Step 3: Return the predictions with [B, K+1, N, N] shape
         return output
 
