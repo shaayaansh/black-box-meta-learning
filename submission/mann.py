@@ -38,7 +38,7 @@ class MANN(nn.Module):
         ### START CODE HERE ###
 
         # Step 1: Concatenate the full (support & query) set of labels and images
-        labels_clone = input_labels.detach.clone()
+        labels_clone = input_labels.detach().clone()
 
         concatenated_inputs = torch.cat((input_images, labels_clone), dim=-1)      
 
