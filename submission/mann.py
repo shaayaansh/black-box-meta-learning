@@ -38,7 +38,10 @@ class MANN(nn.Module):
         ### START CODE HERE ###
 
         # Step 1: Concatenate the full (support & query) set of labels and images
-        concatenated_inputs = torch.cat((input_labels, input_images), dim=-1)      
+        input_images = input_images.to(torch.float32)
+        input_labels = input_labels.to(torch.float32)
+
+        concatenated_inputs = torch.cat((input_images, input_labels), dim=-1)      
 
         # Step 2: Zero out the labels from the concatenated corresponding to the query set
         concatenated_inputs[:, -1,:, 784:] = 0
