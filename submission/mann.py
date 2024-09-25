@@ -45,7 +45,7 @@ class MANN(nn.Module):
 
         # Step 3: Pass the concatenated set sequentially to the memory-augmented network
         for item in concatenated_inputs[:, :-1,:,:]:
-            hidden = self.layer1(item.unsqueeze(0))
+            hidden = self.layer1(item)
 
         output = self.layer2(hidden)
         # Step 3: Return the predictions with [B, K+1, N, N] shape
