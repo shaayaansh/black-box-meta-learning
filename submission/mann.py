@@ -36,21 +36,19 @@ class MANN(nn.Module):
         """
         #############################
         ### START CODE HERE ###
-
+        
         # Step 1: Concatenate the full (support & query) set of labels and images
         labels_clone = input_labels.detach().clone()
 
-        concatenated_inputs = torch.cat((input_images, labels_clone), dim=-1)      
-
         # Step 2: Zero out the labels from the concatenated corresponding to the query set
-        concatenated_inputs[:, -1,:, 784:] = 0
-
+        labels_clone[:, -1, :, :] = torch.zeros_like(labels_clone[:, -1, :, :])
+        inputs = torch.cat((input_images, labels_clone), dim=-1)
+        inputs = inputs.view(inputs.shape[0], -1, inputs.shape[3])
         # Step 3: Pass the concatenated set sequentially to the memory-augmented network
-        concatenated_inputs = concatenated_inputs.view(concatenated_inputs.shape[0], -1, concatenated_inputs.shape[3])
-
-        hidden, _ = self.layer1(concatenated_inputs.float())
-        output, _ = self.layer2(hidden)
+        output_1, _ = self.layer1(inputs.float())
+        output_2, _ = self.layer2(output_1)
         # Step 3: Return the predictions with [B, K+1, N, N] shape
+        output = output_2.view(inputs.shape[0], self.samples_per_class, self.num_classes, self.num_classes)
         return output
 
         ### END CODE HERE ###
@@ -70,16 +68,16 @@ class MANN(nn.Module):
             with predicted unnormalized logits as input and ground truth class indices as target.
             Your logits would be of shape [B*N, N], and label indices would be of shape [B*N].
         """
-        #############################
-
         loss = None
 
-        ### START CODE HERE ###
-
         # Step 1: extract the predictions for the query set
-
+        preds_target = preds[:, -1, :, :].reshape(-1, preds.shape[-1])
         # Step 2: extract the true labels for the query set and reverse the one hot-encoding  
-
+        labels_target = labels[:, -1, :, :].reshape(-1, labels.shape[-1])
+        
         # Step 3: compute the Cross Entropy Loss for the query set only!
-        ### END CODE HERE ###
+        loss = F.cross_entropy(preds_target, labels_target)
         return loss
+
+        
+
